@@ -2,3 +2,4 @@
 bin/
 .aptos/
 scripts.move
+build/

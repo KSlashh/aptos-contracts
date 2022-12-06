@@ -1,0 +1,16 @@
+[package]
+name = 'ZoinAptosContracts'
+version = '1.0.0'
+upgrade_policy = "compatible"
+
+[dependencies.AptosFramework]
+git = 'https://github.com/aptos-labs/aptos-core.git'
+rev = 'main'
+subdir = 'aptos-move/framework/aptos-framework'
+
+[addresses]
+std = "0x1"
+aptos_std = "0x1"
+aptos_framework = "0x1"
+poly = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
+
