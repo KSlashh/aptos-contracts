@@ -5,5 +5,7 @@ module poly_bridge::coins {
     struct USDC has key {}
     struct USDT has key {}
     struct DAI has key {}
+    struct BNB has key {}
+    struct WING has key {}
     
 }

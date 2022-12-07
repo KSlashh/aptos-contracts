@@ -5,17 +5,13 @@ upgrade_policy = "compatible"
 
 [dependencies.AptosFramework]
 git = 'https://github.com/aptos-labs/aptos-core.git'
-rev = 'devnet'
+rev = 'main'
 subdir = 'aptos-move/framework/aptos-framework'
-
-[dependencies.AptosStdlib]
-git = 'https://github.com/aptos-labs/aptos-core.git'
-rev = 'devnet'
-subdir = 'aptos-move/framework/aptos-stdlib'
 
 [addresses]
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "0x4a98355a0d56b8be0b8c95c85c522cff292916a716907e36a874b31c73b32eb3"
-poly_bridge = "0x4a98355a0d56b8be0b8c95c85c522cff292916a716907e36a874b31c73b32eb3"
+poly = "0xf12a4ff673797d20307f081103186c6a725a6c8609a551bdc13ee30862f2ce15"
+poly_bridge = "0xf12a4ff673797d20307f081103186c6a725a6c8609a551bdc13ee30862f2ce15"
+
