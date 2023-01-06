@@ -1,4 +1,4 @@
-module poly::zero_copy_sink {
+module poly_bridge::zero_copy_sink {
     use std::vector;
     use std::bcs;
 

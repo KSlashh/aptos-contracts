@@ -1,4 +1,4 @@
-module poly::zero_copy_source {
+module poly_bridge::zero_copy_source {
     use std::vector;
     use poly::utils as putil;
 

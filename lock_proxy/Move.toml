@@ -1,5 +1,5 @@
 [package]
-name = 'ZoinAptosContracts'
+name = 'AptosLockProxy'
 version = '1.0.0'
 upgrade_policy = "compatible"
 
@@ -8,11 +8,13 @@ git = 'https://github.com/aptos-labs/aptos-core.git'
 rev = 'main'
 subdir = 'aptos-move/framework/aptos-framework'
 
+[dependencies]
+'ZoinAptosContracts' = { local = "../cross_chain_manager", addr_subst = { "poly" = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d" } }
+
 [addresses]
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "_"
-
-[dev-addresses]
 poly = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
+poly_bridge = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
+
