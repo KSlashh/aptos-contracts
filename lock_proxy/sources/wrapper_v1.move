@@ -47,13 +47,14 @@ module poly_bridge::wrapper_v1 {
     
     // for relayer 
     public entry fun relay_unlock_tx<CoinType>(
-        proof: vector<u8>, 
-        rawHeader: vector<u8>, 
-        headerProof: vector<u8>, 
-        curRawHeader: vector<u8>, 
-        headerSig: vector<u8>
+        account: &signer,
+        raw_header: vector<u8>, 
+        raw_seals: vector<u8>, 
+        account_proof: vector<u8>, 
+        storage_proof: vector<u8>, 
+        raw_cross_tx: vector<u8>
     ) {
-        lock_proxy::relay_unlock_tx<CoinType>(proof, rawHeader, headerProof, curRawHeader, headerSig);
+        lock_proxy::relay_unlock_tx<CoinType>(account, raw_header, raw_seals, account_proof, storage_proof, raw_cross_tx);
     }
 
     // for user

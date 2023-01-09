@@ -459,7 +459,7 @@ module poly::cross_chain_manager {
 
     // verify header and execute tx
     public fun verifyHeaderAndExecuteTx(
-        _accont: &signer,
+        _account: &signer,
         license: &License, 
         raw_header: &vector<u8>, 
         raw_seals: &vector<u8>, 

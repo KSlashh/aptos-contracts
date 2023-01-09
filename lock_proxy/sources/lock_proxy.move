@@ -402,11 +402,12 @@ module poly_bridge::lock_proxy {
     }
 
     public entry fun relay_unlock_tx<CoinType>(
-        proof: vector<u8>, 
-        rawHeader: vector<u8>, 
-        headerProof: vector<u8>, 
-        curRawHeader: vector<u8>, 
-        headerSig: vector<u8>
+        account: &signer,
+        raw_header: vector<u8>, 
+        raw_seals: vector<u8>, 
+        account_proof: vector<u8>, 
+        storage_proof: vector<u8>, 
+        raw_cross_tx: vector<u8>
     ) acquires Treasury, LicenseStore, LockProxyStore {
         // borrow license
         assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_NOT_EXIST);
@@ -414,7 +415,7 @@ module poly_bridge::lock_proxy {
         assert!(option::is_some<cross_chain_manager::License>(license_opt), ELICENSE_NOT_EXIST);
         let license_ref = option::borrow(license_opt);
 
-        let certificate = cross_chain_manager::verifyHeaderAndExecuteTx(license_ref, &proof, &rawHeader, &headerProof, &curRawHeader, &headerSig);
+        let certificate = cross_chain_manager::verifyHeaderAndExecuteTx(account, license_ref, &raw_header, &raw_seals, &account_proof, &storage_proof, &raw_cross_tx);
         unlock<CoinType>(certificate);
     }
 
