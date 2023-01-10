@@ -305,7 +305,7 @@ module poly::cross_chain_utils {
         let size;
         let offset = 0;
         (_,offset) = rlp_read_kind(raw_header, offset);
-        (root, offset) = rlp_get_next_bytes(raw_header, offset + 87); // position of Root
+        (root,_) = rlp_get_next_bytes(raw_header, offset + 87); // position of Root
         (size, offset) = rlp_read_kind(raw_header, offset + 445); // position of Difficulty
         (number,_) = rlp_get_next_u256(raw_header, offset + size); // position of Number
         (root, (number as u64))
