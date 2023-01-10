@@ -53,6 +53,7 @@ module poly::cross_chain_utils {
     const ECRECOVER_EINVALID_SIGNATURE: u64 = 7;
     const VERIFY_PROOF_EUNEQUAL_NODE_HASH: u64 = 8;
     const VERIFY_PROOF_EINVALID_KEY: u64 = 9;
+    const RLP_U256_EINVALID_DATA_LENGTH: u64 = 10;
 
     /*
             
@@ -306,7 +307,7 @@ module poly::cross_chain_utils {
         (_,offset) = rlp_read_kind(raw_header, offset);
         (root, offset) = rlp_get_next_bytes(raw_header, offset + 87); // position of Root
         (size, offset) = rlp_read_kind(raw_header, offset + 445); // position of Difficulty
-        (number,_) = rlp_get_next_u128(raw_header, offset + size); // position of Number
+        (number,_) = rlp_get_next_u256(raw_header, offset + size); // position of Number
         (root, (number as u64))
     }
 
@@ -522,6 +523,17 @@ module poly::cross_chain_utils {
     }
 
     // return (value, offset_)
+    public fun rlp_get_next_u256(
+        raw: &vector<u8>,
+        offset: u64,
+    ): (u128, u64) {
+        let size;
+        (size, offset) = rlp_read_kind(raw, offset);
+        assert!(size<=32, RLP_U256_EINVALID_DATA_LENGTH);
+        rlp_read_uint(raw, offset, size)
+    }
+
+    // return (value, offset_)
     public fun rlp_split(
         raw: &vector<u8>,
         offset: u64,
@@ -565,6 +577,7 @@ module poly::cross_chain_utils {
         while (index > 0) {
             index = index - 1;
             let b = *vector::borrow(raw, offset+index);
+            if (b == 0) continue;
             val = val + (b as u128) * pow(0x100, (len-index-1 as u128))
         };
         (val, offset+len)
