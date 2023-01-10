@@ -12,7 +12,5 @@ subdir = 'aptos-move/framework/aptos-framework'
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "_"
+poly = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
 
-[dev-addresses]
-poly = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"

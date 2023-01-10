@@ -9,14 +9,14 @@ rev = 'main'
 subdir = 'aptos-move/framework/aptos-framework'
 
 [dependencies]
-'ZoinAptosContracts' = { local = "../cross_chain_manager", addr_subst = { "poly" = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d" } }
-'AptosLockProxy' = { local = "../lock_proxy", addr_subst = { "poly_bridge" = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d" } }
+'ZoinAptosContracts' = { local = "../cross_chain_manager", addr_subst = { "poly" = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175" } }
+'AptosLockProxy' = { local = "../lock_proxy", addr_subst = { "poly_bridge" = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175" } }
 
 [addresses]
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
-poly_bridge = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
-poly_tools = "0x992dabb5069d6e3bd38dcb8bca3db9416426b636b8285160b56471fdd335e77d"
+poly = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
+poly_bridge = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
+poly_tools = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
 
