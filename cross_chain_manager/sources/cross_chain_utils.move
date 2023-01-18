@@ -283,7 +283,7 @@ module poly::cross_chain_utils {
     }
 
     public fun get_header_hash(raw_header: vector<u8>): vector<u8> {
-        keccak256(keccak256(raw_header))
+        keccak256(raw_header)
     }
 
     /*
