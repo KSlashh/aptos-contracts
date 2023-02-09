@@ -153,7 +153,7 @@ module poly::cross_chain_utils {
     public fun key_bytes_to_hex(key_bytes: &vector<u8>): vector<u8> {
         let len = vector::length(key_bytes);
         let key_hex = vector::empty<u8>();
-        let index = len;
+        let index = 0;
         while (index < len) {
             let b = *vector::borrow(key_bytes, index);
             vector::push_back(&mut key_hex, b >> 4);
@@ -173,7 +173,7 @@ module poly::cross_chain_utils {
         if (is_odd) vector::push_back(&mut key_hex, kc0 & 0x0f);
         let compact_len = vector::length(key_compact);
         let i = 0;
-        while (i < compact_len) {
+        while (i < compact_len-1) {
             i = i + 1;
             let kci = *vector::borrow(key_compact, i);
             vector::push_back(&mut key_hex, kci >> 4);
