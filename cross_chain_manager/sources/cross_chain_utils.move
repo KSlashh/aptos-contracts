@@ -434,7 +434,7 @@ module poly::cross_chain_utils {
         let value_len = vector::length(&value);
         let padding_zeros = ((value_len + EVM_SLOT_LENGTH - 1) / EVM_SLOT_LENGTH) * EVM_SLOT_LENGTH - value_len;
         let padded_value = value;
-        utils::left_padding<u8>(&mut padded_value, padding_zeros, 0);
+        utils::right_padding<u8>(&mut padded_value, padding_zeros, 0);
         let enc_value = u64_to_evm_format_bytes32(value_len);
         vector::append(&mut enc_value, padded_value);
         vector::append(tail, enc_value);
