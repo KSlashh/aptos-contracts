@@ -53,7 +53,7 @@ module poly::utils {
     }
 
     public fun to_u256(v: vector<u8>): u256 {
-        return (to_u128(slice<u8>(&v, 0, 16)) as u256) * 0x100000000000000000000000000000000 + (to_u128(slice<u8>(&v, 16, 16)) as u256) 
+        return (to_u128(slice<u8>(&v, 16, 16)) as u256) * 0x100000000000000000000000000000000 + (to_u128(slice<u8>(&v, 0, 16)) as u256) 
     }
 
     public fun to_address(v: vector<u8>): address {
