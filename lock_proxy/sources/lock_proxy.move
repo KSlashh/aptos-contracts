@@ -68,7 +68,7 @@ module poly_bridge::lock_proxy {
         to_asset: TypeInfo,
         to_address: address,
         amount: u64,
-        from_chain_amount: u128,
+        from_chain_amount: u256,
     }
     struct LockEvent has store, drop {
         from_asset: TypeInfo,
@@ -77,7 +77,7 @@ module poly_bridge::lock_proxy {
         to_asset_hash: vector<u8>,
         to_address: vector<u8>,
         amount: u64,
-        target_chain_amount: u128
+        target_chain_amount: u256
     }
 
 
@@ -421,35 +421,35 @@ module poly_bridge::lock_proxy {
 
 
     // decimals conversion
-    public fun to_target_chain_amount<CoinType>(amount: u64, target_decimals: u8): u128 {
+    public fun to_target_chain_amount<CoinType>(amount: u64, target_decimals: u8): u256 {
         let source_decimals = coin::decimals<CoinType>();
-        (amount as u128) * pow_10(target_decimals) / pow_10(source_decimals)
+        (amount as u256) * pow_10(target_decimals) / pow_10(source_decimals)
     }
-    public fun from_target_chain_amount<CoinType>(target_chain_amount: u128, target_decimals: u8): u64 {
+    public fun from_target_chain_amount<CoinType>(target_chain_amount: u256, target_decimals: u8): u64 {
         let source_decimals = coin::decimals<CoinType>();
         (target_chain_amount * pow_10(source_decimals) / pow_10(target_decimals) as u64)
     }
-    fun pow_10(decimals: u8): u128 {
-        math128::pow(10, (decimals as u128))
+    fun pow_10(decimals: u8): u256 {
+        (math128::pow(10, (decimals as u128)) as u256)
     }
 
 
     // codecs
-    public fun serializeTxArgs(to_asset: &vector<u8>, to_address: &vector<u8>, amount: u128): vector<u8> {
+    public fun serializeTxArgs(to_asset: &vector<u8>, to_address: &vector<u8>, amount: u256): vector<u8> {
         let buf = zero_copy_sink::write_var_bytes(to_asset);
         vector::append(&mut buf, zero_copy_sink::write_var_bytes(to_address));
-        vector::append(&mut buf, zero_copy_sink::write_u256((0 as u128), amount));
+        vector::append(&mut buf, zero_copy_sink::write_u256(amount));
         return buf
     }
 
-    public fun deserializeTxArgs(raw_data: &vector<u8>): (vector<u8>, vector<u8>, u128) {
+    public fun deserializeTxArgs(raw_data: &vector<u8>): (vector<u8>, vector<u8>, u256) {
         let offset = (0 as u64);
         let to_asset: vector<u8>;
         let to_address: vector<u8>;
-        let amount: u128;
+        let amount: u256;
         (to_asset, offset) = zero_copy_source::next_var_bytes(raw_data, offset);
         (to_address, offset) = zero_copy_source::next_var_bytes(raw_data, offset);
-        (_, amount, _) = zero_copy_source::next_u256(raw_data, offset);
+        (amount, _) = zero_copy_source::next_u256(raw_data, offset);
         return (to_asset, to_address, amount)
     }
 }

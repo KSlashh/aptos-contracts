@@ -52,6 +52,10 @@ module poly::utils {
         return from_bcs::to_u128(v)
     }
 
+    public fun to_u256(v: vector<u8>): u256 {
+        return (to_u128(slice<u8>(&v, 0, 16)) as u256) * 0x100000000000000000000000000000000 + (to_u128(slice<u8>(&v, 16, 16)) as u256) 
+    }
+
     public fun to_address(v: vector<u8>): address {
         return from_bcs::to_address(v)
     }
@@ -73,6 +77,9 @@ module poly::utils {
             return any::unpack<T>(any::pack(res))
         } else if (type == string::utf8(b"u128")) {
             let res = from_bcs::to_u128(v);
+            return any::unpack<T>(any::pack(res))
+        } else if (type == string::utf8(b"u256")) {
+            let res = to_u256(v);
             return any::unpack<T>(any::pack(res))
         } else if (type == string::utf8(b"address")) {
             let res = from_bcs::to_address(v);

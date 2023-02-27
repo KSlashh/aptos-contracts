@@ -6,7 +6,6 @@ module poly::cross_chain_utils {
 
     use aptos_std::secp256k1;
     use aptos_std::aptos_hash::{keccak256};
-    use aptos_std::math128::pow;
 
     use poly::utils;
 
@@ -517,16 +516,18 @@ module poly::cross_chain_utils {
         offset: u64,
     ): (u128, u64) {
         let size;
+        let val;
         (size, offset) = rlp_read_kind(raw, offset);
         assert!(size<=16, RLP_U128_EINVALID_DATA_LENGTH);
-        rlp_read_uint(raw, offset, size)
+        (val, offset) = rlp_read_uint(raw, offset, size);
+        ((val as u128), offset)
     }
 
     // return (value, offset_)
     public fun rlp_get_next_u256(
         raw: &vector<u8>,
         offset: u64,
-    ): (u128, u64) {
+    ): (u256, u64) {
         let size;
         (size, offset) = rlp_read_kind(raw, offset);
         assert!(size<=32, RLP_U256_EINVALID_DATA_LENGTH);
@@ -571,14 +572,17 @@ module poly::cross_chain_utils {
         raw: &vector<u8>,
         offset: u64,
         len: u64,
-    ): (u128, u64) {
-        let index = len;
-        let val = 0;
+    ): (u256, u64) {
+        let index = len - 1;
+        let first_byte = *vector::borrow(raw, offset+index);
+        let val = (first_byte as u256);
+        let pow = 1;
         while (index > 0) {
             index = index - 1;
+            pow = pow * 0x100;
             let b = *vector::borrow(raw, offset+index);
             if (b == 0) continue;
-            val = val + (b as u128) * pow(0x100, (len-index-1 as u128))
+            val = val + (b as u256) * pow
         };
         (val, offset+len)
     }

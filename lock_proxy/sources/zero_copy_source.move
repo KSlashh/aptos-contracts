@@ -17,22 +17,14 @@ module poly_bridge::zero_copy_source {
         return (res, offset+1)
     }
 
-    public fun next_u32(bs: &vector<u8>, offset: u64): (u64, u64) {
-        let res = putil::slice<u8>(bs, offset, 4);
-        vector::append(&mut res, vector<u8>[0, 0, 0, 0]);
-        return (putil::to_u64(res), offset+4)
-    }
-
     public fun next_u64(bs: &vector<u8>, offset: u64): (u64, u64) {
         let res = putil::slice<u8>(bs, offset, 8);
         return (putil::to_u64(res), offset+8)
     }
 
-    // return (high128, low128, offset)
-    public fun next_u256(bs: &vector<u8>, offset: u64): (u128, u128, u64) {
-        let low_bcs = putil::slice<u8>(bs, offset, 16);
-        let high_bcs = putil::slice<u8>(bs, offset+16, 16);
-        return (putil::to_u128(high_bcs), putil::to_u128(low_bcs), offset+32)
+    public fun next_u256(bs: &vector<u8>, offset: u64): (u256, u64) {
+        let res = putil::slice<u8>(bs, offset, 32);
+        return (putil::to_u256(res), offset+32)
     }
 
     public fun next_hash(bs: &vector<u8>, offset: u64): (vector<u8>, u64) {
