@@ -12,5 +12,5 @@ subdir = 'aptos-move/framework/aptos-framework'
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-nb_coin = "0xff"
+nb_coin = "0x03c2cc044d9f375acfe12fb8383fa17d8fca4e968e23ec520cf493e4689eabf1"
 

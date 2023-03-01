@@ -11,6 +11,7 @@ module poly_bridge::lock_proxy {
     use aptos_framework::account;
 
     use poly::cross_chain_manager;
+    use poly::cross_chain_manager::License;
     use poly::zero_copy_sink;
     use poly::zero_copy_source;
     use poly::utils;
@@ -48,10 +49,9 @@ module poly_bridge::lock_proxy {
         coin: Coin<CoinType>
     }
 
-    struct LicenseStore has key, store {
-        license: Option<cross_chain_manager::License>
+    struct LicenseStore<LicenseType: store> has key, store {
+        license: Option<LicenseType>
     }
-
 
     // events
     struct BindProxyEvent has store, drop {
@@ -96,8 +96,8 @@ module poly_bridge::lock_proxy {
             unlock_event: account::new_event_handle<UnlockEvent>(admin),
         });
 
-        move_to<LicenseStore>(admin, LicenseStore{
-            license: option::none<cross_chain_manager::License>(),
+        move_to<LicenseStore<License>>(admin, LicenseStore<License>{
+            license: option::none<License>(),
         });
     }
 
@@ -286,30 +286,25 @@ module poly_bridge::lock_proxy {
 
 
     // license function
-    public fun receiveLicense(license: cross_chain_manager::License) acquires LicenseStore {
-        assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_STORE_NOT_EXIST);
-        let license_opt = &mut borrow_global_mut<LicenseStore>(@poly_bridge).license;
-        assert!(option::is_none<cross_chain_manager::License>(license_opt), ELICENSE_ALREADY_EXIST);
-        let (license_account, license_module_name) = cross_chain_manager::getLicenseInfo(&license);
-        let this_type = type_info::type_of<LicenseStore>();
-        let this_account = type_info::account_address(&this_type);
-        let this_module_name = type_info::module_name(&this_type);
-        assert!(license_account == this_account && license_module_name == this_module_name, EINVALID_LICENSE_INFO);
+    public fun receiveLicense<LicenseType: store>(license: LicenseType) acquires LicenseStore {
+        assert!(exists<LicenseStore<LicenseType>>(@poly_bridge), ELICENSE_STORE_NOT_EXIST);
+        let license_opt = &mut borrow_global_mut<LicenseStore<LicenseType>>(@poly_bridge).license;
+        assert!(option::is_none<LicenseType>(license_opt), ELICENSE_ALREADY_EXIST);
         option::fill(license_opt, license);
     }
 
-    public fun removeLicense(admin: &signer): cross_chain_manager::License acquires LicenseStore {
+    public fun removeLicense<LicenseType: store>(admin: &signer): LicenseType acquires LicenseStore {
         assert!(signer::address_of(admin) == @poly_bridge, EINVALID_SIGNER);
-        assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_NOT_EXIST);
-        let license_opt = &mut borrow_global_mut<LicenseStore>(@poly_bridge).license;
-        assert!(option::is_some<cross_chain_manager::License>(license_opt), ELICENSE_NOT_EXIST);
-        option::extract<cross_chain_manager::License>(license_opt)
+        assert!(exists<LicenseStore<LicenseType>>(@poly_bridge), ELICENSE_NOT_EXIST);
+        let license_opt = &mut borrow_global_mut<LicenseStore<LicenseType>>(@poly_bridge).license;
+        assert!(option::is_some<LicenseType>(license_opt), ELICENSE_NOT_EXIST);
+        option::extract<LicenseType>(license_opt)
     }
 
     public fun getLicenseId(): vector<u8> acquires LicenseStore {
-        assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_NOT_EXIST);
-        let license_opt = &borrow_global<LicenseStore>(@poly_bridge).license;
-        assert!(option::is_some<cross_chain_manager::License>(license_opt), ELICENSE_NOT_EXIST);
+        assert!(exists<LicenseStore<License>>(@poly_bridge), ELICENSE_NOT_EXIST);
+        let license_opt = &borrow_global<LicenseStore<License>>(@poly_bridge).license;
+        assert!(option::is_some<License>(license_opt), ELICENSE_NOT_EXIST);
         return cross_chain_manager::getLicenseId(option::borrow(license_opt))
     }
     
@@ -321,9 +316,9 @@ module poly_bridge::lock_proxy {
         deposit(fund);
         
         // borrow license
-        assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_NOT_EXIST);
-        let license_opt = &borrow_global<LicenseStore>(@poly_bridge).license;
-        assert!(option::is_some<cross_chain_manager::License>(license_opt), ELICENSE_NOT_EXIST);
+        assert!(exists<LicenseStore<License>>(@poly_bridge), ELICENSE_NOT_EXIST);
+        let license_opt = &borrow_global<LicenseStore<License>>(@poly_bridge).license;
+        assert!(option::is_some<License>(license_opt), ELICENSE_NOT_EXIST);
         let license_ref = option::borrow(license_opt);
 
         // get target proxy/asset
@@ -357,7 +352,7 @@ module poly_bridge::lock_proxy {
 
 
     // unlock
-    public fun unlock<CoinType>(certificate: cross_chain_manager::Certificate) acquires Treasury, LicenseStore, LockProxyStore {
+    fun unlock<CoinType>(certificate: cross_chain_manager::Certificate) acquires Treasury, LicenseStore, LockProxyStore {
         // read certificate
         let (
             from_contract,
@@ -402,6 +397,7 @@ module poly_bridge::lock_proxy {
     }
 
     public entry fun relay_unlock_tx<CoinType>(
+        _account: &signer,
         proof: vector<u8>, 
         rawHeader: vector<u8>, 
         headerProof: vector<u8>, 
@@ -409,9 +405,9 @@ module poly_bridge::lock_proxy {
         headerSig: vector<u8>
     ) acquires Treasury, LicenseStore, LockProxyStore {
         // borrow license
-        assert!(exists<LicenseStore>(@poly_bridge), ELICENSE_NOT_EXIST);
-        let license_opt = &borrow_global<LicenseStore>(@poly_bridge).license;
-        assert!(option::is_some<cross_chain_manager::License>(license_opt), ELICENSE_NOT_EXIST);
+        assert!(exists<LicenseStore<License>>(@poly_bridge), ELICENSE_NOT_EXIST);
+        let license_opt = &borrow_global<LicenseStore<License>>(@poly_bridge).license;
+        assert!(option::is_some<License>(license_opt), ELICENSE_NOT_EXIST);
         let license_ref = option::borrow(license_opt);
 
         let certificate = cross_chain_manager::verifyHeaderAndExecuteTx(license_ref, &proof, &rawHeader, &headerProof, &curRawHeader, &headerSig);

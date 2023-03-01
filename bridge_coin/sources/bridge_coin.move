@@ -5,7 +5,7 @@ module bridge_coin::bridge_coin {
 
     use aptos_framework::coin;
 
-    use poly_bridge::lock_proxy as lock_proxy_v1;
+    use poly_bridge::lock_proxy;
 
     const ENOT_BRIDGE_ADMIN: u64 = 1;
 
@@ -28,8 +28,8 @@ module bridge_coin::bridge_coin {
         );
 
         let initial_lock = coin::mint<BridgeCoinType>(HUGE_U64, &mint_cap);
-        lock_proxy_v1::initTreasury<BridgeCoinType>(admin);
-        lock_proxy_v1::deposit<BridgeCoinType>(initial_lock);
+        lock_proxy::initTreasury<BridgeCoinType>(admin);
+        lock_proxy::deposit<BridgeCoinType>(initial_lock);
 
         coin::destroy_burn_cap(burn_cap);
         coin::destroy_freeze_cap(freeze_cap);
@@ -37,6 +37,6 @@ module bridge_coin::bridge_coin {
     }
 
     fun only_admin(account: &signer) {
-        assert!(lock_proxy_v1::is_admin(signer::address_of(account)), error::permission_denied(ENOT_BRIDGE_ADMIN));
+        assert!(lock_proxy::is_admin(signer::address_of(account)), error::permission_denied(ENOT_BRIDGE_ADMIN));
     }
 }
