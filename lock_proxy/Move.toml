@@ -1,5 +1,5 @@
 [package]
-name = 'AptosLockProxy'
+name = 'ZionLockProxy'
 version = '1.0.0'
 upgrade_policy = "compatible"
 
@@ -9,12 +9,11 @@ rev = 'main'
 subdir = 'aptos-move/framework/aptos-framework'
 
 [dependencies]
-'ZoinAptosContracts' = { local = "../cross_chain_manager", addr_subst = { "poly" = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175" } }
+'ZoinAptosContracts' = { local = "../cross_chain_manager" }
 
 [addresses]
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
 poly_bridge = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
 
