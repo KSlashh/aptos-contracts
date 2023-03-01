@@ -23,6 +23,19 @@ module poly::utils {
         return res
     }
 
+    public fun right_padding<Element: copy + drop>(v: &mut vector<Element>, cnt: u64, element: Element) {
+        while (cnt > 0) {
+            cnt = cnt - 1;
+            vector::push_back(v, element);
+        };
+    }
+
+    public fun left_padding<Element: copy + drop>(v: &mut vector<Element>, cnt: u64, element: Element) {
+        vector::reverse(v);
+        right_padding<Element>(v, cnt, element);
+        vector::reverse(v);
+    }
+
     public fun to_bool(v: vector<u8>): bool {
         return from_bcs::to_bool(v)
     }
@@ -31,12 +44,21 @@ module poly::utils {
         return from_bcs::to_u8(v)
     }
 
+    public fun to_u32(v: vector<u8>): u32 {
+        vector::append(&mut v, vector<u8>[0, 0, 0, 0]);
+        return (from_bcs::to_u64(v) as u32)
+    }
+
     public fun to_u64(v: vector<u8>): u64 {
         return from_bcs::to_u64(v)
     }
 
     public fun to_u128(v: vector<u8>): u128 {
         return from_bcs::to_u128(v)
+    }
+
+    public fun to_u256(v: vector<u8>): u256 {
+        return (to_u128(slice<u8>(&v, 16, 16)) as u256) * 0x100000000000000000000000000000000 + (to_u128(slice<u8>(&v, 0, 16)) as u256) 
     }
 
     public fun to_address(v: vector<u8>): address {
@@ -60,6 +82,9 @@ module poly::utils {
             return any::unpack<T>(any::pack(res))
         } else if (type == string::utf8(b"u128")) {
             let res = from_bcs::to_u128(v);
+            return any::unpack<T>(any::pack(res))
+        } else if (type == string::utf8(b"u256")) {
+            let res = to_u256(v);
             return any::unpack<T>(any::pack(res))
         } else if (type == string::utf8(b"address")) {
             let res = from_bcs::to_address(v);

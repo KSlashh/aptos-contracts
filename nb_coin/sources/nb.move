@@ -1,4 +1,4 @@
-module poly::nb {
+module nb_coin::nb {
     use std::string;
     use std::error;
     use std::signer;
@@ -81,6 +81,6 @@ module poly::nb {
     }
 
     fun only_admin(account: &signer) {
-        assert!(signer::address_of(account) == @poly, error::permission_denied(ENOT_ADMIN));
+        assert!(signer::address_of(account) == @nb_coin, error::permission_denied(ENOT_ADMIN));
     }
 }

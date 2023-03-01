@@ -14,11 +14,8 @@ module poly::zero_copy_sink {
         return bcs::to_bytes<u64>(&u)
     }
 
-    public fun write_u256(high128: u128, low128: u128): vector<u8> {
-        let high_bcs = bcs::to_bytes<u128>(&high128);
-        let low_bcs = bcs::to_bytes<u128>(&low128);
-        vector::append<u8>(&mut low_bcs, high_bcs);
-        return low_bcs
+    public fun write_u256(u: u256): vector<u8> {
+        return bcs::to_bytes<u256>(&u)
     }
 
     public fun write_var_bytes(bs: &vector<u8>): vector<u8> {

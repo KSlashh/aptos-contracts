@@ -1,5 +1,5 @@
 [package]
-name = 'PolyAptosContracts'
+name = 'PolyAptosTools'
 version = '1.0.0'
 upgrade_policy = "compatible"
 
@@ -8,10 +8,15 @@ git = 'https://github.com/aptos-labs/aptos-core.git'
 rev = 'main'
 subdir = 'aptos-move/framework/aptos-framework'
 
+[dependencies]
+'PolyAptosContracts' = { local = "../cross_chain_manager" }
+'PolyLockProxy' = { local = "../lock_proxy" }
+
 [addresses]
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "0xf12a4ff673797d20307f081103186c6a725a6c8609a551bdc13ee30862f2ce15"
-poly_bridge = "0xf12a4ff673797d20307f081103186c6a725a6c8609a551bdc13ee30862f2ce15"
+poly = "0xff"
+poly_bridge = "0xff"
+poly_tools = "0xff"
 

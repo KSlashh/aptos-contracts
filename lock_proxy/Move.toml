@@ -1,0 +1,20 @@
+[package]
+name = 'PolyLockProxy'
+version = '1.0.0'
+upgrade_policy = "compatible"
+
+[dependencies.AptosFramework]
+git = 'https://github.com/aptos-labs/aptos-core.git'
+rev = 'main'
+subdir = 'aptos-move/framework/aptos-framework'
+
+[dependencies]
+'PolyAptosContracts' = { local = "../cross_chain_manager" }
+
+[addresses]
+std = "0x1"
+aptos_std = "0x1"
+aptos_framework = "0x1"
+poly = "0xff"
+poly_bridge = "0xff"
+

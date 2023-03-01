@@ -160,9 +160,9 @@ module poly::cross_chain_utils {
     }
 
     public fun deserializeHeader(headerBs : &vector<u8>): (
+        u32,
         u64,
-        u64,
-        u64,
+        u32,
         u64,
         u64,
         vector<u8>,
@@ -172,10 +172,10 @@ module poly::cross_chain_utils {
         vector<u8>,
         vector<u8>)
     {
-        let version: u64;
+        let version: u32;
         let chainId: u64;
-        let timestamp: u64;
-        let height: u64;
+        let timestamp: u32;
+        let height: u32;
         let consensusData: u64;
         let prevBlockHash: vector<u8>;
         let transactionsRoot: vector<u8>;
@@ -201,7 +201,7 @@ module poly::cross_chain_utils {
             version,
             chainId,
             timestamp,
-            height,
+            (height as u64),
             consensusData,
             prevBlockHash,
             transactionsRoot,
