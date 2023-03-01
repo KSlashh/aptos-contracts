@@ -1,5 +1,5 @@
 [package]
-name = 'ZoinAptosContracts'
+name = 'ZionAptosContracts'
 version = '1.0.0'
 upgrade_policy = "compatible"
 
@@ -12,5 +12,5 @@ subdir = 'aptos-move/framework/aptos-framework'
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly = "0x7b4abaf5dc9c20e9dbb13221f91c55ac5a2034d851e103fd6c048944512f2175"
+poly = "0xc4d9a4e7bbe8ec9e8d834d1e17a7789e6feaf36a31f4302e8b36fcabd6f78c46"
 

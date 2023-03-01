@@ -44,6 +44,11 @@ module poly::utils {
         return from_bcs::to_u8(v)
     }
 
+    public fun to_u32(v: vector<u8>): u32 {
+        vector::append(&mut v, vector<u8>[0, 0, 0, 0]);
+        return (from_bcs::to_u64(v) as u32)
+    }
+    
     public fun to_u64(v: vector<u8>): u64 {
         return from_bcs::to_u64(v)
     }

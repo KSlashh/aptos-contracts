@@ -17,6 +17,11 @@ module poly_bridge::zero_copy_source {
         return (res, offset+1)
     }
 
+    public fun next_u32(bs: &vector<u8>, offset: u64): (u32, u64) {
+        let res = putil::slice<u8>(bs, offset, 4);
+        return (putil::to_u32(res), offset+4)
+    }
+
     public fun next_u64(bs: &vector<u8>, offset: u64): (u64, u64) {
         let res = putil::slice<u8>(bs, offset, 8);
         return (putil::to_u64(res), offset+8)
