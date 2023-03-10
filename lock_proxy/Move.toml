@@ -15,5 +15,5 @@ subdir = 'aptos-move/framework/aptos-framework'
 std = "0x1"
 aptos_std = "0x1"
 aptos_framework = "0x1"
-poly_bridge = "0x8b233c25f7e85a5c31bcfba800fe628813e4b7361cbfeac512d8a7f5f40fc53c"
+poly_bridge = "0x5a0f73c9195680ae69d209b53d4cc69b16ad8e581a54189b274aa36ab893d51d"
 
