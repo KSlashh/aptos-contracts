@@ -573,6 +573,7 @@ module poly::cross_chain_utils {
         offset: u64,
         len: u64,
     ): (u256, u64) {
+        if (len == 0) return (0, offset);
         let index = len - 1;
         let first_byte = *vector::borrow(raw, offset+index);
         let val = (first_byte as u256);
