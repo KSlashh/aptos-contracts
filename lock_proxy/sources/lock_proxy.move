@@ -267,6 +267,10 @@ module poly_bridge::lock_proxy {
         account == @poly_bridge
     }
 
+    public entry fun deposit_to_treasury<CoinType>(account: &signer, amount: u64) acquires Treasury {
+        deposit<CoinType>(coin::withdraw<CoinType>(account, amount));
+    }
+
     public fun deposit<CoinType>(fund: Coin<CoinType>) acquires Treasury {
         assert!(exists<Treasury<CoinType>>(@poly_bridge), ETREASURY_NOT_EXIST);
         let treasury_ref = borrow_global_mut<Treasury<CoinType>>(@poly_bridge);
