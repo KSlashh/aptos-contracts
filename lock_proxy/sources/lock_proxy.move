@@ -446,4 +446,139 @@ module poly_bridge::lock_proxy {
         (amount, _) = zero_copy_source::next_u256(raw_data, offset);
         return (to_asset, to_address, amount)
     }
+
+    #[test_only]
+    use aptos_framework::aptos_coin::AptosCoin;
+    use aptos_framework::account;
+
+    #[test_only]
+    fun test_init(admin: &signer) {
+        assert!(signer::address_of(admin) == @poly_bridge, EINVALID_SIGNER);
+
+        move_to<LockProxyStore>(admin, LockProxyStore{
+            proxy_map: table::new<u64, vector<u8>>(),
+            asset_map: table::new<TypeInfo, Table<u64, vector<u8>>>(),
+            paused: false,
+            owner: signer::address_of(admin),
+            bind_proxy_event: account::new_event_handle<BindProxyEvent>(admin),
+            bind_asset_event: account::new_event_handle<BindAssetEvent>(admin),
+            lock_event: account::new_event_handle<LockEvent>(admin),
+            unlock_event: account::new_event_handle<UnlockEvent>(admin),
+        });
+
+        move_to<LicenseStore<License>>(admin, LicenseStore<License>{
+            license: option::none<License>(),
+        });
+    }
+
+    #[test_only] 
+    fun test_setup(arg: &signer) {
+        0x1::aptos_account::create_account(@poly_bridge);
+        test_init(arg);
+    }
+
+    #[test(arg = @poly_bridge)]
+    fun pause_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        assert!(!paused(), 0);
+        pause(&arg);
+        assert!(paused(), 0);
+        unpause(&arg);
+        assert!(!paused(), 0);
+    }
+
+    #[test(arg = @poly_bridge, invalid_signer = @0x2), expected_failure]
+    fun pause_failure_test(arg: signer, invalid_signer: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let addr = signer::address_of(&invalid_signer);
+        0x1::aptos_account::create_account(addr);
+        assert!(!paused(), 0);
+        pause(&invalid_signer);
+    }
+
+    #[test]
+    fun serializeTxArgs_test() {
+        let asset = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        let addr = x"E1D7C7a4596B038CEd2A84bF65B8647271C53208";
+        let amount = 13238898723897u256;
+        let arg = serializeTxArgs(&asset, &addr, amount);
+        let (asset_cp, addr_cp, amount_cp) = deserializeTxArgs(&arg);
+        assert!(asset == asset_cp, 0);
+        assert!(addr == addr_cp, 0);
+        assert!(amount == amount_cp, 0);
+    }
+
+    #[test(arg = @poly_bridge), expected_failure(abort_code = ETARGET_ASSET_NOT_BIND)]
+    fun bind_asset_nil_failure_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        getToAsset<AptosCoin>(10);
+    }
+
+    #[test(arg = @poly_bridge)]
+    fun bind_asset_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetAsset = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        let targetAsset2 = x"13233e3c0e6b48010873b947bddc4721b1bdff9648";
+
+        bindAsset<AptosCoin>(&arg, 10, targetAsset, 18);
+        let (asset, decimals) = getToAsset<AptosCoin>(10);
+        assert!((asset == targetAsset), 0);
+        assert!(decimals == 18, 0);
+
+        bindAsset<AptosCoin>(&arg, 10, targetAsset2, 9);
+        (asset, decimals) = getToAsset<AptosCoin>(10);
+        assert!((asset == targetAsset2), 0);
+        assert!((asset != targetAsset), 0);
+        assert!(decimals == 9, 0);
+    }
+
+    #[test(arg = @poly_bridge), expected_failure(abort_code = ETARGET_ASSET_NOT_BIND)]
+    fun unbind_asset_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetAsset = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        bindAsset<AptosCoin>(&arg, 10, targetAsset, 18);
+        let (asset, decimals) = getToAsset<AptosCoin>(10);
+        assert!((asset == targetAsset), 0);
+        assert!(decimals == 18, 0);
+        unbindAsset<AptosCoin>(&arg, 10);
+        getToAsset<AptosCoin>(10);
+    }
+
+    #[test(arg = @poly_bridge, invalid_signer = @0x2), expected_failure]
+    fun bind_asset_failure_test(arg: signer, invalid_signer: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetAsset = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        bindAsset<AptosCoin>(&invalid_signer, 10, targetAsset, 9);
+    }
+
+    #[test(arg = @poly_bridge), expected_failure(abort_code = ETARGET_PROXY_NOT_BIND)]
+    fun bind_proxy_nil_failure_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        getTargetProxy(10);
+    }
+
+    #[test(arg = @poly_bridge)]
+    fun bind_proxy_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetProxy = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        bindProxy(&arg, 10, targetProxy);
+        assert!((getTargetProxy(10) == targetProxy), 0);
+    }
+
+    #[test(arg = @poly_bridge), expected_failure(abort_code = ETARGET_PROXY_NOT_BIND)]
+    fun unbind_proxy_test(arg: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetProxy = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        bindProxy(&arg, 10, targetProxy);
+        assert!((getTargetProxy(10) == targetProxy), 0);
+        unbindProxy(&arg, 10);
+        getTargetProxy(10);
+    }
+
+    #[test(arg = @poly_bridge, invalid_signer = @0x2), expected_failure]
+    fun bind_proxy_failure_test(arg: signer, invalid_signer: signer) acquires LockProxyStore {
+        test_setup(&arg);
+        let targetProxy = x"03233e3c0e6b48010873b947bddc4721b1bdff9648";
+        bindProxy(&invalid_signer, 10, targetProxy);
+    }
 }
